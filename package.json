@@ -1,0 +1,22 @@
+{
+    "name": "react-chartist-axis-titles-polyfill",
+    "version": "1.0.0",
+    "description": "A polyfill to display axis titles in react-chartist.",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Girish-K/react-chartist-axis-titles-polyfill.git"
+    },
+    "author": "Girish Kumar",
+    "license": "UNLICENSED",
+    "bugs": {
+        "url": "https://github.com/Girish-K/react-chartist-axis-titles-polyfill/issues"
+    },
+    "homepage": "https://github.com/Girish-K/react-chartist-axis-titles-polyfill",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    }
+}
