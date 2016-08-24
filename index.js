@@ -1,4 +1,6 @@
-import Chartist from 'chartist';
+use 'strict';
+
+let Chartist = require('chartist');
 
 /**
  * [function that acts as a polyfill to display axis titles for chartist graphs ]
