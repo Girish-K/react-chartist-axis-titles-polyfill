@@ -14,6 +14,23 @@
     }
 }(this, function (Chartist) {
 	(function(){
+    /**
+     * [function that updates alphaNumerate function of chartist]
+     */
+     		(function(Chartist) {
+    			Chartist.alphaNumerate = function(number){
+            var stringForm = '';
+            while(number >= 0){
+                stringForm = String.fromCharCode(97 + number % 26) + stringForm;
+                if(number >= 26){
+                  number = parseInt(number / 26) - 1;
+                }else{
+                  number = -1;
+                }
+            }
+            return stringForm;
+          };
+        }(Chartist));
 		/**
 		 * [function that acts as a polyfill to display axis titles for chartist graphs ]
 		 */
@@ -118,7 +135,7 @@
 					}
 					// Set a unique className for each series so that when a series is removed,
 					// the other series still have the same color.
-					if(options.clickable) {
+					if(options.enabledToggleSeriesOnLegendClick) {
 						var newSeries = chart.data.series.map(function(series, seriesIndex) {
 							if(typeof series !== 'object') {
 								series = {
@@ -158,40 +175,28 @@
 						legendElement.appendChild(li);
 					});
 					chart.container.appendChild(legendElement);
-					if(options.clickable) {
-						legendElement.addEventListener('click', function(e) {
+          options.highlightSeriesOnLegendHover = true;
+					if(options.highlightSeriesOnLegendHover) {
+						legendElement.addEventListener('mouseover', function(e) {
 							var li = e.target;
 							if(li.parentNode !== legendElement || !li.hasAttribute('data-legend')) return;
 							e.preventDefault();
-							var seriesIndex = parseInt(li.getAttribute('data-legend')),
-								removedSeriesIndex = removedSeries.indexOf(seriesIndex);
-							if(removedSeriesIndex > -1) {
-								// Add to series again.
-								removedSeries.splice(removedSeriesIndex, 1);
-								li.classList.remove('inactive');
-							} else {
-								// Remove from series, only if a minimum of one series is still visible.
-								if(chart.data.series.length > 1) {
-									removedSeries.push(seriesIndex);
-									li.classList.add('inactive');
-								}
-							}
+							var selectedSeriesIndex = parseInt(li.getAttribute('data-legend'));
 							// Reset the series to original and remove each series that
 							// is still removed again, to remain index order.
-							var seriesCopy = originalSeries.slice(0);
+							var seriesCopy = originalSeries.map(function(series, seriesIndex) {
+                if(seriesIndex === selectedSeriesIndex){
+                  if(typeof series !== 'object') {
+                    series = {
+                      value: series
+                    };
+                  }
+                  series.className = series.className || chart.options.classNames.series + '-' + Chartist.alphaNumerate(seriesIndex) + ' hightlight-legend';
+                }
+  							return series;
+  						});
 							if(useLabels) {
 								var labelsCopy = originalLabels.slice(0);
-							}
-							// Reverse sort the removedSeries to prevent removing the wrong index.
-							removedSeries.sort().reverse();
-							removedSeries.forEach(function(series) {
-								seriesCopy.splice(series, 1);
-								if(useLabels) {
-									labelsCopy.splice(series, 1);
-								}
-							});
-							if(options.onClick) {
-								options.onClick(chart, e);
 							}
 							chart.data.series = seriesCopy;
 							if(useLabels) {
@@ -199,7 +204,77 @@
 							}
 							chart.update();
 						});
-					}
+
+            legendElement.addEventListener('mouseout', function(e) {
+							var li = e.target;
+							if(li.parentNode !== legendElement || !li.hasAttribute('data-legend')) return;
+							e.preventDefault();
+							var selectedSeriesIndex = parseInt(li.getAttribute('data-legend'));
+							// Reset the series to original and remove each series that
+							// is still removed again, to remain index order.
+							var seriesCopy = originalSeries.map(function(series, seriesIndex) {
+                if(seriesIndex === selectedSeriesIndex){
+                  if(typeof series !== 'object') {
+                    series = {
+                      value: series
+                    };
+                  }
+                  series.className = series.className || chart.options.classNames.series + '-' + Chartist.alphaNumerate(seriesIndex) ;
+                }
+  							return series;
+  						});
+							if(useLabels) {
+								var labelsCopy = originalLabels.slice(0);
+							}
+							chart.data.series = seriesCopy;
+							if(useLabels) {
+								chart.data.labels = labelsCopy;
+							}
+							chart.update();
+						});
+
+					}else if(options.enabledToggleSeriesOnLegendClick){
+            legendElement.addEventListener('click', function(e) {
+  							var li = e.target;
+  							if(li.parentNode !== legendElement || !li.hasAttribute('data-legend')) return;
+  							e.preventDefault();
+  							var seriesIndex = parseInt(li.getAttribute('data-legend')),
+  								removedSeriesIndex = removedSeries.indexOf(seriesIndex);
+  							if(removedSeriesIndex > -1) {
+  								// Add to series again.
+  								removedSeries.splice(removedSeriesIndex, 1);
+  								li.classList.remove('inactive');
+  							} else {
+  								// Remove from series, only if a minimum of one series is still visible.
+  								if(chart.data.series.length > 1) {
+  									removedSeries.push(seriesIndex);
+  									li.classList.add('inactive');
+  								}
+  							}
+  							// Reset the series to original and remove each series that
+  							// is still removed again, to remain index order.
+  							var seriesCopy = originalSeries.slice(0);
+  							if(useLabels) {
+  								var labelsCopy = originalLabels.slice(0);
+  							}
+  							// Reverse sort the removedSeries to prevent removing the wrong index.
+  							removedSeries.sort().reverse();
+  							removedSeries.forEach(function(series) {
+  								seriesCopy.splice(series, 1);
+  								if(useLabels) {
+  									labelsCopy.splice(series, 1);
+  								}
+  							});
+  							if(options.onClick) {
+  								options.onClick(chart, e);
+  							}
+  							chart.data.series = seriesCopy;
+  							if(useLabels) {
+  								chart.data.labels = labelsCopy;
+  							}
+  							chart.update();
+  						});
+          }
 				};
 			};
 			return Chartist.plugins.legend;
