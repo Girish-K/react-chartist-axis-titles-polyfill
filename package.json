@@ -1,5 +1,5 @@
 {
-  "name": "react-chartist-axis-titles-polyfill",
+  "name": "react-chartist-utility-polyfill",
   "version": "1.0.3",
   "description": "A polyfill to display axis titles in react-chartist.",
   "main": "index.js",
