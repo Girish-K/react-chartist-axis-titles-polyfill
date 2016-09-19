@@ -175,7 +175,6 @@
 						legendElement.appendChild(li);
 					});
 					chart.container.appendChild(legendElement);
-          options.highlightSeriesOnLegendHover = true;
 					if(options.highlightSeriesOnLegendHover) {
 						legendElement.addEventListener('mouseover', function(e) {
 							var li = e.target;
