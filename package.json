@@ -1,6 +1,6 @@
 {
-  "name": "react-chartist-utility-polyfill",
-  "version": "1.0.3",
+  "name": "react-chartist-axis-titles-polyfill",
+  "version": "1.0.5",
   "description": "A polyfill to display axis titles in react-chartist.",
   "main": "index.js",
   "repository": {
